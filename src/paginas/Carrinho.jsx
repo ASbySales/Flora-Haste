@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react'
 import { supabase, TENANT_ID, WHATSAPP_NUMBER } from '../lib/supabase'
 import logoFloraHaste from '../assets/logo-flora-haste.jpg'
-import { Calendar, Clock, MessageSquare, Trash2, ArrowLeft, Send } from 'lucide-react'
+import { Trash2, ArrowLeft, MessageCircle } from 'lucide-react'
 
 export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
     const [mostrarFormulario, setMostrarFormulario] = useState(false)
     const [nome, setNome] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
-    const [dataEntrega, setDataEntrega] = useState(() => {
-        const hoje = new Date()
-        return hoje.toISOString().split('T')[0]
-    })
-    const [horarioEntrega, setHorarioEntrega] = useState('Tarde (13h às 18h)')
-    const [observacoes, setObservacoes] = useState('')
     const [honeypot, setHoneypot] = useState('')
     const [enviando, setEnviando] = useState(false)
     const [erroEnvio, setErroEnvio] = useState('')
@@ -124,14 +118,17 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                 })
             }
 
+            // Data de hoje para preenchimento automático no banco
+            const hoje = new Date().toISOString().split('T')[0]
+
             // Grava atômica via RPC no banco da AS Gestão
             const { data: pedidoCriado, error: erroRPC } = await supabase.rpc('criar_agendamento_publico_tenant', {
                 p_tenant_id: TENANT_ID,
                 p_nome_cliente: nome.trim(),
                 p_whatsapp_cliente: whatsapp,
-                p_data_agendamento: dataEntrega || null,
-                p_horario_agendamento: horarioEntrega || null,
-                p_observacoes: observacoes?.trim() || null,
+                p_data_agendamento: hoje,
+                p_horario_agendamento: 'A combinar via WhatsApp',
+                p_observacoes: 'Prazo e horário a combinar via WhatsApp',
                 p_itens: payloadItens
             })
 
@@ -145,9 +142,7 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
             const pedidoId = pedidoCriado?.id || 'NOVO'
             let msg = `🌸 *NOVO PEDIDO - FLORA HASTE* (Nº #${pedidoId})\n\n`
             msg += `👤 *Cliente:* ${nome.trim()}\n`
-            msg += `📱 *WhatsApp:* ${whatsapp}\n`
-            msg += `📅 *Data de Entrega/Retirada:* ${dataEntrega.split('-').reverse().join('/')}\n`
-            msg += `⏰ *Período:* ${horarioEntrega}\n\n`
+            msg += `📱 *WhatsApp:* ${whatsapp}\n\n`
             msg += `📋 *ITENS DO PEDIDO:*\n`
 
             itens.forEach((it, idx) => {
@@ -163,18 +158,13 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
 
             const totalFormatado = calcularTotalGeral().toFixed(2).replace('.', ',')
             msg += `\n\n💰 *VALOR TOTAL: R$ ${totalFormatado}*`
-
-            if (observacoes.trim()) {
-                msg += `\n\n💌 *Mensagem do Cartão / Obs:* \n"${observacoes.trim()}"`
-            }
-
-            msg += `\n\n_Aguardando confirmação de entrega e pagamento._`
+            msg += `\n\n_Olá! Acabei de enviar meu pedido pelo catálogo. Gostaria de combinar o prazo, horário e pagamento!_`
 
             // Limpa a sacola e fecha modal
             setItens([])
             carr()
 
-            // Abre o WhatsApp com o pedido formatado
+            // Abre o WhatsApp oficial com o pedido formatado
             const urlWhats = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`
             window.open(urlWhats, '_blank')
 
@@ -195,7 +185,7 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
         >
             <div 
                 onClick={(e) => e.stopPropagation()} 
-                className='w-full max-w-[380px] bg-white rounded-3xl p-4 shadow-2xl overflow-hidden border border-[#F9E6EE] flex flex-col max-h-[92vh]'
+                className='w-full max-w-[360px] bg-white rounded-3xl p-4 shadow-2xl overflow-hidden border border-[#F9E6EE] flex flex-col max-h-[90vh]'
             >
                 {/* Header da Sacola */}
                 <div className='flex items-center justify-between border-b border-gray-100 pb-3'>
@@ -210,7 +200,7 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                             </button>
                         )}
                         <h2 className='text-base font-bold text-gray-800 font-cinzel'>
-                            {mostrarFormulario ? 'Finalizar Pedido' : 'Sua Sacola'}
+                            {mostrarFormulario ? 'Identificação' : 'Sua Sacola'}
                         </h2>
                     </div>
                     <button 
@@ -222,10 +212,10 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                     </button>
                 </div>
 
-                {/* Conteúdo Dinâmico: Lista de Itens OU Formulário de Finalização */}
+                {/* Conteúdo Dinâmico: Lista de Itens OU Formulário Simples (Nome + WhatsApp) */}
                 <div className='flex-1 overflow-y-auto no-scrollbar py-3'>
                     {!mostrarFormulario ? (
-                        /* VISUALIZAÇÃO 1: LISTA DE ITENS NA SACOLA */
+                        /* VISUALIZAÇÃO 1: ITENS NA SACOLA */
                         itens.length === 0 ? (
                             <div className='py-12 flex flex-col items-center justify-center text-center gap-2'>
                                 <img src={logoFloraHaste} className='w-16 h-16 rounded-full opacity-60 mb-2 object-cover' />
@@ -251,7 +241,6 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                                             </div>
 
                                             <div className='flex items-center gap-2 shrink-0'>
-                                                {/* Controle de Qtd */}
                                                 <div className='flex items-center bg-white border border-gray-200 rounded-lg px-1'>
                                                     <button 
                                                         type="button"
@@ -280,7 +269,6 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                                             </div>
                                         </div>
 
-                                        {/* Opcionais vinculados a esse item */}
                                         {Object.keys(it.opcionais || {}).length > 0 && (
                                             <div className='border-t border-[#F9E6EE] pt-2 flex flex-col gap-1 pl-2'>
                                                 <span className='text-[10px] font-bold text-[#4E7A52] uppercase tracking-wider'>
@@ -303,9 +291,8 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                             </div>
                         )
                     ) : (
-                        /* VISUALIZAÇÃO 2: FORMULÁRIO DE ENTREGA & IDENTIFICAÇÃO */
+                        /* VISUALIZAÇÃO 2: FORMULÁRIO SIMPLIFICADO (APENAS NOME + WHATSAPP) */
                         <form onSubmit={handleFinalizarPedido} className='flex flex-col gap-3 py-1 text-left'>
-                            {/* Honeypot anti-bot */}
                             <input 
                                 type="text" 
                                 value={honeypot} 
@@ -315,8 +302,12 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                                 autoComplete="off" 
                             />
 
+                            <p className='text-xs text-gray-500'>
+                                Informe seus dados para registrar o pedido no sistema e continuar o atendimento no WhatsApp:
+                            </p>
+
                             <div>
-                                <label className='block text-xs font-bold text-gray-700 mb-1'>Seu Nome Completo:</label>
+                                <label className='block text-xs font-bold text-gray-700 mb-1'>Seu Nome:</label>
                                 <input 
                                     type="text" 
                                     required 
@@ -339,51 +330,6 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                                 />
                             </div>
 
-                            <div className='grid grid-cols-2 gap-2'>
-                                <div>
-                                    <label className='block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1'>
-                                        <Calendar className='w-3 h-3 text-[#D14D7C]' /> Data Entrega:
-                                    </label>
-                                    <input 
-                                        type="date" 
-                                        required 
-                                        min={new Date().toISOString().split('T')[0]}
-                                        value={dataEntrega} 
-                                        onChange={e => setDataEntrega(e.target.value)}
-                                        className='w-full px-2.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-[#D14D7C]'
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className='block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1'>
-                                        <Clock className='w-3 h-3 text-[#D14D7C]' /> Período:
-                                    </label>
-                                    <select 
-                                        value={horarioEntrega} 
-                                        onChange={e => setHorarioEntrega(e.target.value)}
-                                        className='w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-[#D14D7C]'
-                                    >
-                                        <option value="Manhã (08h às 12h)">Manhã (08h às 12h)</option>
-                                        <option value="Tarde (13h às 18h)">Tarde (13h às 18h)</option>
-                                        <option value="Comercial (08h às 18h)">Comercial (08h às 18h)</option>
-                                        <option value="Retirada na Loja">Retirada na Loja</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className='block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1'>
-                                    <MessageSquare className='w-3 h-3 text-[#4E7A52]' /> Mensagem do Cartão / Obs:
-                                </label>
-                                <textarea 
-                                    rows="2"
-                                    value={observacoes} 
-                                    onChange={e => setObservacoes(e.target.value)}
-                                    placeholder="Escreva a dedicatória do cartão ou endereço de entrega..."
-                                    className='w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-[#D14D7C] focus:bg-white resize-none'
-                                />
-                            </div>
-
                             {erroEnvio && (
                                 <p className='text-xs font-bold text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-100'>
                                     ⚠️ {erroEnvio}
@@ -393,10 +339,10 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                             <button 
                                 type="submit"
                                 disabled={enviando}
-                                className='w-full h-12 mt-1 bg-gradient-to-r from-[#D14D7C] to-[#E58AA9] text-white font-bold text-sm rounded-xl shadow-md hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border-none'
+                                className='w-full h-12 mt-2 bg-gradient-to-r from-[#D14D7C] to-[#E58AA9] text-white font-bold text-sm rounded-xl shadow-md hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer border-none'
                             >
-                                <Send className='w-4 h-4' />
-                                {enviando ? 'Enviando Pedido...' : 'Enviar Pedido pelo WhatsApp'}
+                                <MessageCircle className='w-4.5 h-4.5' />
+                                {enviando ? 'Registrando Pedido...' : 'Ir ao WhatsApp'}
                             </button>
                         </form>
                     )}
@@ -406,7 +352,7 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                 {!mostrarFormulario && itens.length > 0 && (
                     <div className='border-t border-gray-100 pt-3 flex flex-col gap-2'>
                         <div className='flex items-center justify-between'>
-                            <span className='text-xs text-gray-500 font-semibold'>Subtotal estimado:</span>
+                            <span className='text-xs text-gray-500 font-semibold'>Total da sacola:</span>
                             <span className='text-lg font-bold text-[#D14D7C]'>R$ {totalFormatado}</span>
                         </div>
                         <button 
@@ -414,7 +360,7 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                             onClick={() => setMostrarFormulario(true)}
                             className='w-full h-11 bg-gradient-to-r from-[#D14D7C] to-[#E58AA9] text-white font-bold text-sm rounded-xl shadow-md hover:scale-[1.01] active:scale-95 transition-all cursor-pointer border-none'
                         >
-                            Avançar para Entrega
+                            Avançar
                         </button>
                     </div>
                 )}
