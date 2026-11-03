@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-flora-pink: #D14D7C;
+  --color-flora-soft: #F9E6EE;
+  --color-flora-green: #4E7A52;
+  --color-flora-gold: #C5A059;
+  --font-cinzel: "Cinzel", serif;
+  --font-playfair: "Playfair Display", serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+:root {
+  --bg: #FFFFFF;
+  --text: #2D3142;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Oculta barra de rolagem mantendo a funcionalidade de scroll fluido */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Fundo padrão vichy floral delicado */
+.bg-vichy-delicate {
+  background-color: #FFF8FA;
+  background-image: 
+    linear-gradient(90deg, rgba(209, 77, 124, 0.04) 50%, transparent 50%),
+    linear-gradient(rgba(209, 77, 124, 0.04) 50%, transparent 50%);
+  background-size: 24px 24px;
+}
