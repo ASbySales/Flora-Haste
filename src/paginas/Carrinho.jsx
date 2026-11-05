@@ -118,17 +118,21 @@ export default function Carrinho({ carr, itens, setItens, opcionaisData }) {
                 })
             }
 
-            // Data de hoje para preenchimento automático no banco
-            const hoje = new Date().toISOString().split('T')[0]
+            // Data local (Brasil) para preenchimento automático no banco
+            const agora = new Date()
+            const ano = agora.getFullYear()
+            const mes = String(agora.getMonth() + 1).padStart(2, '0')
+            const dia = String(agora.getDate()).padStart(2, '0')
+            const hoje = `${ano}-${mes}-${dia}`
 
-            // Grava atômica via RPC no banco da AS Gestão
+            // Grava atômica via RPC no banco da AS Gestão (horário <= 20 caracteres)
             const { data: pedidoCriado, error: erroRPC } = await supabase.rpc('criar_agendamento_publico_tenant', {
                 p_tenant_id: TENANT_ID,
                 p_nome_cliente: nome.trim(),
                 p_whatsapp_cliente: whatsapp,
                 p_data_agendamento: hoje,
-                p_horario_agendamento: 'A combinar via WhatsApp',
-                p_observacoes: 'Prazo e horário a combinar via WhatsApp',
+                p_horario_agendamento: 'A combinar',
+                p_observacoes: 'A combinar no WhatsApp',
                 p_itens: payloadItens
             })
 

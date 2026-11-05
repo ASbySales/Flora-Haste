@@ -8,10 +8,10 @@ export default function Home() {
     const navigate = useNavigate()
 
     return (
-        <div className='w-full min-h-screen flex flex-col items-center justify-start bg-white selection:bg-[#D9A09E] selection:text-white'>
+        <div className='w-full min-h-screen flex flex-col items-center justify-start bg-[#FFF8FA] selection:bg-[#D14D7C] selection:text-white'>
             
-            {/* Cabeçalho Curvo em Fluxo Natural (estilo JK) */}
-            <header className='w-full relative bg-white flex flex-col items-center pb-4'>
+            {/* Cabeçalho Curvo em Fluxo Natural (estilo JK com o rosa da Flora Haste) */}
+            <header className='w-full relative bg-white flex flex-col items-center pb-4 shadow-xs border-b border-[#F9E6EE]'>
                 <svg width="0" height="0" className="absolute">
                     <defs>
                         <clipPath id="minimal-01-mask" clipPathUnits="objectBoundingBox">
@@ -20,32 +20,32 @@ export default function Home() {
                     </defs>
                 </svg>
                 
-                {/* Imagem de Capa com Gradiente Rose Gold chique idêntico ao JK */}
+                {/* Imagem de Capa com o mesmo gradiente rosa da tela de catálogo */}
                 <div 
-                    className='h-[180px] w-full relative bg-gradient-to-tr from-[#E6C2C1]/70 via-[#D9A09E] to-[#E6C2C1]/90' 
+                    className='h-[180px] w-full relative bg-gradient-to-r from-[#F9D6DE] via-[#F4B2C3] to-[#F9D6DE]' 
                     style={{ clipPath: 'url(#minimal-01-mask)' }} 
                 />
                 
-                {/* Foto do Perfil Circular Flutuante com borda inferior rose gold */}
-                <div className='absolute top-[90px] left-1/2 -translate-x-1/2 w-[130px] h-[130px] rounded-full border-b-4 border-[#D9A09E] bg-white shadow-md overflow-hidden flex items-center justify-center'>
+                {/* Foto do Perfil Circular Flutuante com borda inferior no rosa oficial */}
+                <div className='absolute top-[90px] left-1/2 -translate-x-1/2 w-[130px] h-[130px] rounded-full border-b-4 border-[#F4B2C3] bg-white shadow-md overflow-hidden flex items-center justify-center ring-2 ring-[#D14D7C]/20'>
                     <img className='w-full h-full object-cover' src={logoFloraHaste} alt="Logo Flora Haste" />
                 </div>
                 
                 {/* Título Oficial */}
                 <div className='mt-[70px] text-center select-none tracking-wide p-2'>
-                    <h1 className='text-3xl text-[#C08A89] font-cinzel font-semibold tracking-wide'>
+                    <h1 className='text-3xl text-gray-800 font-cinzel font-bold tracking-wider'>
                         FLORA HASTE
                     </h1>
-                    <span className='text-sm block font-sans font-normal text-[#C08A89]/80 uppercase tracking-widest mt-0.5'>
+                    <span className='text-xs block font-sans font-semibold text-[#D14D7C] uppercase tracking-widest mt-0.5'>
                         Floricultura & Presentes Afetivos
                     </span>
                 </div>
             </header>
 
             {/* Redes Sociais (Instagram) */}
-            <section className='w-full max-w-[480px] flex justify-center items-center py-3 bg-white'>
+            <section className='w-full max-w-[480px] flex justify-center items-center py-3 bg-[#FFF8FA]'>
                 <a 
-                    className='text-[#C08A89] hover:opacity-80 transition-opacity p-2' 
+                    className='text-[#D14D7C] hover:opacity-80 transition-opacity p-2' 
                     href='https://www.instagram.com/florahastecg' 
                     rel='noopener noreferrer' 
                     target='_blank'
@@ -58,10 +58,10 @@ export default function Home() {
             </section>
 
             {/* Listagem de Links / Botões Minimalistas (Exato estilo JK) */}
-            <section className='w-full max-w-[480px] flex flex-col pt-24 bg-white font-bold'>
+            <section className='w-full max-w-[480px] flex flex-col pt-24 bg-[#FFF8FA] font-bold'>
                 
                 {/* BOTÃO 1: FAÇA SEU PEDIDO (WHATSAPP) */}
-                <div className='w-full border-b border-[#C08A89]/20 hover:bg-black/[0.02] transition-colors duration-200'>
+                <div className='w-full border-b border-[#D14D7C]/20 hover:bg-black/[0.02] transition-colors duration-200'>
                     <a 
                         className='flex flex-row items-center justify-between px-6 py-4' 
                         target='_blank' 
@@ -71,8 +71,8 @@ export default function Home() {
                         <img className='w-14 h-14 rounded-full object-cover' alt="Faça seu pedido" src={whatsapp} />
                         
                         <div className='flex-1 flex flex-row justify-between items-center ml-4'>
-                            <span className='text-[#D9A09E] text-base font-semibold'>Faça seu pedido</span>
-                            <svg className='w-5 h-5 text-[#D9A09E]' viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <span className='text-[#D14D7C] text-base font-semibold'>Faça seu pedido</span>
+                            <svg className='w-5 h-5 text-[#D14D7C]' viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M15.4419 5.44194C15.686 5.19786 15.686 4.80213 15.4419 4.55806L11.4645 0.580581C11.2204 0.336504 10.8247 0.336504 10.5806 0.580582C10.3365 0.824659 10.3365 1.22039 10.5806 1.46447L14.1161 5L10.5806 8.53553C10.3365 8.77961 10.3365 9.17534 10.5806 9.41942C10.8247 9.66349 11.2204 9.66349 11.4645 9.41942L15.4419 5.44194ZM4.82111e-08 5.625L15 5.625L15 4.375L-4.82111e-08 4.375L4.82111e-08 5.625Z" fill="currentColor"></path>
                             </svg>
                         </div>
@@ -80,7 +80,7 @@ export default function Home() {
                 </div>
                 
                 {/* BOTÃO 2: NOSSO CATÁLOGO */}
-                <div className='w-full border-b border-[#C08A89]/20 hover:bg-black/[0.02] transition-colors duration-200'>
+                <div className='w-full border-b border-[#D14D7C]/20 hover:bg-black/[0.02] transition-colors duration-200'>
                     <button 
                         className='w-full flex flex-row items-center justify-between px-6 py-4 cursor-pointer border-none bg-transparent' 
                         type='button' 
@@ -89,8 +89,8 @@ export default function Home() {
                         <img className='w-14 h-14 rounded-full opacity-60 object-cover' alt="Nosso catálogo" src={catalogo} />
  
                         <div className='flex-1 flex flex-row justify-between items-center ml-4'>
-                            <span className='text-[#D9A09E] text-base font-semibold'>Nosso Catálogo</span>
-                            <svg className='w-5 h-5 text-[#D9A09E]' viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <span className='text-[#D14D7C] text-base font-semibold'>Nosso Catálogo</span>
+                            <svg className='w-5 h-5 text-[#D14D7C]' viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M15.4419 5.44194C15.686 5.19786 15.686 4.80213 15.4419 4.55806L11.4645 0.580581C11.2204 0.336504 10.8247 0.336504 10.5806 0.580582C10.3365 0.824659 10.3365 1.22039 10.5806 1.46447L14.1161 5L10.5806 8.53553C10.3365 8.77961 10.3365 9.17534 10.5806 9.41942C10.8247 9.66349 11.2204 9.66349 11.4645 9.41942L15.4419 5.44194ZM4.82111e-08 5.625L15 5.625L15 4.375L-4.82111e-08 4.375L4.82111e-08 5.625Z" fill="currentColor"></path>
                             </svg>
                         </div>
@@ -99,9 +99,9 @@ export default function Home() {
             </section>
  
             {/* Rodapé da Página */}
-            <footer className='w-full max-w-[480px] py-8 flex flex-col items-center justify-end bg-white gap-2 mt-auto'>
-                <hr className='w-16 border-t border-[#C08A89]/20'></hr>
-                <div className='text-xs text-[#C08A89]/70 font-light font-cinzel'>
+            <footer className='w-full max-w-[480px] py-8 flex flex-col items-center justify-end bg-[#FFF8FA] gap-2 mt-auto'>
+                <hr className='w-16 border-t border-[#D14D7C]/20'></hr>
+                <div className='text-xs text-[#D14D7C]/70 font-light font-cinzel'>
                     Flora Haste Floricultura & Presentes Afetivos
                 </div>
                 <div className='text-[10px] text-gray-400 font-sans'>
